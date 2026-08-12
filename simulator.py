@@ -1,6 +1,10 @@
 # Monte Carlo Stock Simulator
 
+import yfinance as yf
+
 stock = "AAPL"
 
-print("Monte Carlo Stock Simulator")
-print(f"Stock: {stock}")
+print(f"Fetching data for {stock}...")
+data = yf.download(stock, period="1y", interval="1d", progress=False)
+
+print(data.tail())
