@@ -33,7 +33,12 @@ for sim in range(simulations):
         prices.append(next_price)
     final_prices.append(round(prices[-1], 2))
 
-print(f"Simulations complete")
+# calculate probability of profit and loss
+above = len([p for p in final_prices if p > current_price])
+below = len([p for p in final_prices if p < current_price])
+
 print(f"Average final price: ${round(sum(final_prices) / len(final_prices), 2)}")
 print(f"Highest final price: ${max(final_prices)}")
 print(f"Lowest final price: ${min(final_prices)}")
+print(f"Probability of profit: {round((above / simulations) * 100, 2)}%")
+print(f"Probability of loss: {round((below / simulations) * 100, 2)}%")
