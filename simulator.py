@@ -33,7 +33,12 @@ for sim in range(simulations):
         prices.append(next_price)
     final_prices.append(round(prices[-1], 2))
 
-# calculate probability of profit and loss
+final_prices.sort()
+
+# calculate value at risk — worst 5% outcome
+var_95 = final_prices[int(simulations * 0.05)]
+var_99 = final_prices[int(simulations * 0.01)]
+
 above = len([p for p in final_prices if p > current_price])
 below = len([p for p in final_prices if p < current_price])
 
@@ -42,3 +47,5 @@ print(f"Highest final price: ${max(final_prices)}")
 print(f"Lowest final price: ${min(final_prices)}")
 print(f"Probability of profit: {round((above / simulations) * 100, 2)}%")
 print(f"Probability of loss: {round((below / simulations) * 100, 2)}%")
+print(f"Value at Risk (95%): ${var_95}")
+print(f"Value at Risk (99%): ${var_99}")
