@@ -18,10 +18,10 @@ current_price = float(close.iloc[-1])
 
 print(f"Current price: ${round(current_price, 2)}")
 
-# run 1000 simulations and store all final prices
 days = 30
 simulations = 1000
 final_prices = []
+all_paths = []
 
 print(f"\nRunning {simulations} simulations over {days} days...")
 
@@ -32,15 +32,18 @@ for sim in range(simulations):
         next_price = prices[-1] * (1 + random_return)
         prices.append(next_price)
     final_prices.append(round(prices[-1], 2))
+    all_paths.append(prices)
 
 final_prices.sort()
 
-# calculate value at risk — worst 5% outcome
 var_95 = final_prices[int(simulations * 0.05)]
 var_99 = final_prices[int(simulations * 0.01)]
-
 above = len([p for p in final_prices if p > current_price])
 below = len([p for p in final_prices if p < current_price])
+
+# calculate 5th and 95th percentile price paths for confidence interval
+lower_bound = all_paths[int(simulations * 0.05)]
+upper_bound = all_paths[int(simulations * 0.95)]
 
 print(f"Average final price: ${round(sum(final_prices) / len(final_prices), 2)}")
 print(f"Highest final price: ${max(final_prices)}")
@@ -49,3 +52,4 @@ print(f"Probability of profit: {round((above / simulations) * 100, 2)}%")
 print(f"Probability of loss: {round((below / simulations) * 100, 2)}%")
 print(f"Value at Risk (95%): ${var_95}")
 print(f"Value at Risk (99%): ${var_99}")
+print(f"90% Confidence interval: ${round(lower_bound[-1], 2)} — ${round(upper_bound[-1], 2)}")
