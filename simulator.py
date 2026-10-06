@@ -13,7 +13,6 @@ def get_stock_data(stock, period="1y"):
 
 
 def calculate_parameters(close):
-    # calculate mean return and volatility from historical data
     daily_returns = close.pct_change().dropna()
     mean_return = float(daily_returns.mean())
     volatility = float(daily_returns.std())
@@ -34,6 +33,20 @@ def run_simulation(current_price, mean_return, volatility, days=30, simulations=
         all_paths.append(prices)
 
     return final_prices, all_paths
+
+
+def save_csv(stock, final_prices):
+    # save all simulation final prices to a timestamped csv file
+    os.makedirs("output", exist_ok=True)
+    filename = datetime.datetime.now().strftime(f"{stock}_simulation_%Y%m%d_%H%M%S.csv")
+    filepath = os.path.join("output", filename)
+
+    with open(filepath, "w") as f:
+        f.write("Simulation,Final Price\n")
+        for i, price in enumerate(final_prices):
+            f.write(f"{i + 1},{price}\n")
+
+    print(f"Results saved to {filepath}")
 
 
 def print_summary(stock, current_price, final_prices, simulations):
@@ -64,4 +77,5 @@ for stock in stocks:
     mean_return, volatility, current_price = calculate_parameters(close)
     final_prices, all_paths = run_simulation(current_price, mean_return, volatility)
     print_summary(stock, current_price, final_prices, 1000)
+    save_csv(stock, final_prices)
     print()
