@@ -36,7 +36,6 @@ def run_simulation(current_price, mean_return, volatility, days=30, simulations=
 
 
 def save_csv(stock, final_prices):
-    # save all simulation final prices to a timestamped csv file
     os.makedirs("output", exist_ok=True)
     filename = datetime.datetime.now().strftime(f"{stock}_simulation_%Y%m%d_%H%M%S.csv")
     filepath = os.path.join("output", filename)
@@ -70,7 +69,18 @@ def print_summary(stock, current_price, final_prices, simulations):
     print(f"Value at Risk (99%): ${var_99}")
 
 
+def compare_stocks(results):
+    # compare all stocks and find the one with highest average simulated price
+    print("\n" + "=" * 40)
+    print("STOCK COMPARISON")
+    print("=" * 40)
+    for stock, avg, current in results:
+        change = round(((avg - current) / current) * 100, 2)
+        print(f"  {stock}: ${current} → ${avg} ({change:+.2f}%)")
+
+
 stocks = ["AAPL", "MSFT", "TSLA", "NVDA"]
+comparison_results = []
 
 for stock in stocks:
     close = get_stock_data(stock)
@@ -78,4 +88,8 @@ for stock in stocks:
     final_prices, all_paths = run_simulation(current_price, mean_return, volatility)
     print_summary(stock, current_price, final_prices, 1000)
     save_csv(stock, final_prices)
+    avg = round(sum(final_prices) / len(final_prices), 2)
+    comparison_results.append((stock, avg, current_price))
     print()
+
+compare_stocks(comparison_results)
